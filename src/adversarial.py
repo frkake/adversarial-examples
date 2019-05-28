@@ -31,7 +31,7 @@ class AdvImg:
         print("セッション読み込み完了")
         self.x_adv = x
         self.noise = np.zeros_like(x)
-        self.adv_his = []
+        self.adv_imgs = []
 
         for i in range(num_iter):
             loss = K.sparse_categorical_crossentropy(self.y, self.model.output)
@@ -46,9 +46,10 @@ class AdvImg:
             self.x_adv = sess.run(self.x_adv, feed_dict={self.model.input: self.x})
             self.preds.append(self.model.predict(self.x_adv))
             
-            if (i+1) % 10 == 0:
+            if (i+1) % 5 == 0:
                 print(f"{i+1}, Pred: {np.argmax(self.preds[-1], axis=-1)}")
-                self.adv_his.append(self.x_adv)
+                self.adv_imgs.append(self.x_adv)
+
 
 if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
