@@ -55,7 +55,7 @@ class AdvImg:
             delta = K.sign(grads)
 
             # もともとのノイズ、Adversarial Imageに差分を追加して更新する
-            self.noise = self.noise + delta
+            self.noise = self.noise + epsilon*delta
             self.x_adv = self.x_adv + epsilon*delta
             self.x_adv = K.clip(self.x_adv, 0, 1) # 画像の表現範囲を超えないようにクリッピング
 
