@@ -9,11 +9,10 @@ from collections import OrderedDict
 import tensorflow as tf
 import numpy as np
 from pathlib import Path
-import cv2
 import matplotlib.pyplot as plt
 from importlib import reload
 
-import model_make as mm
+import model_zoo as zoo
 
 class AdvImg:
     '''
@@ -82,7 +81,7 @@ if __name__ == "__main__":
     if model_path.exists():
         model = load_model(str(model_path))
     else:
-        model = mm.CNN(input_shape=(28, 28, 1)) # MNIST用
+        model = zoo.CNN(input_shape=(28, 28, 1)) # MNIST用
         log_dir = Path("..", "logs")
         tb = TensorBoard(log_dir=str(log_dir))
         model.compile(optimizer="Adam", loss="sparse_categorical_crossentropy", metrics=["acc"])
