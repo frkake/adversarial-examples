@@ -8,4 +8,5 @@ MNISTだと摂動が非常わかりやすので、結果の確認のためにそ
 - 自前で作ったベーシックな攻撃・FGSM PyTorch版（[pytorch-mnist.ipynb](./notebooks/pytorch-mnist.ipynb)）  
   ターゲット攻撃があってるのか自身薄...
 - Cleverhansを使ったFGSM ([cleverhans-fgsm-tensorflow.ipynb](./notebooks/cleverhans-fgsm-tensorflow.ipynb))
-- foolboxを使ったFGSM ([foolbox-fgsm-keras.ipynb](./notebooks/foolbox-fgsm-keras.ipynb))
+- foolboxを使った様々な攻撃 ([foolbox-fgsm-keras.ipynb](./notebooks/foolbox-fgsm-keras.ipynb))
+- DAEを使ったAdversarial Examplesの防御([DAE_defence.ipynb](./notebooks/DAE_defence.ipynb))
