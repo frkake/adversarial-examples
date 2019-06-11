@@ -1,5 +1,7 @@
-__pycache__/
-model_dir/
-logs/
+**/__pycache__
+**/model_dir
+**/logs/
 */.*
 .DS_Store
+**/XDG_CACHE_HOME/**
+data/
