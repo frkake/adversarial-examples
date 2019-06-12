@@ -11,6 +11,11 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from importlib import reload
+from tqdm import tqdm
+import time
+
+import foolbox
+from foolbox.models import TensorFlowModel
 
 import model_zoo as zoo
 
@@ -67,6 +72,46 @@ class AdvImg:
                 print(f"{i+1}, Pred: {np.argmax(self.preds[-1], axis=-1)}")
                 self.adv_imgs.append(self.x_adv)
 
+class AdvTraining:
+    def __init__(self, kmodel, method, criterion):
+        '''
+        Adversarial Trainingを行うクラス
+        params
+        :kmodel: Kerasモデル（学習済み）
+        :method: foolboxのbatch_attacksモジュール
+        '''
+        self.kmodel = kmodel
+        self.fmodel = TensorFlowModel.from_keras(kmodel, bounds=(0, 1))
+        self.criterion = criterion
+        self.method_base = method
+    
+    def fit(self, x, y, epochs, validation_data=None, batch_size=32, verbose=1):
+        '''
+        params
+        :x: オリジナルデータ
+        :y: オリジナルラベル
+        :i: イテレーション数
+        '''
+        self.x = x
+        self.y = y
+        for i in range(epochs):
+            print(f'\n{i+1} / {epochs} epochs')
+            # rand_idx = np.random.permutation(np.arange(self.x.shape[0])) # 全データのAdversarial Examplesをランダムな順番で作成
+            rand_idx = np.random.choice(np.arange(self.x.shape[0]), size=batch_size) # 全データ作成している時間がないので、ランダムな10サンプル分を作成
+            self.fmodel = TensorFlowModel.from_keras(self.kmodel, bounds=(0, 1))
+            self.method = self.method_base(self.fmodel, criterion=self.criterion)
+
+            self.adv_imgs, self.orig_cls = [], []
+            for r_idx in rand_idx:
+                x_adv = self.method(self.x[r_idx], self.y[r_idx], unpack=False)
+                if x_adv.image is None:
+                    continue
+                self.adv_imgs.append(x_adv.image)
+                self.orig_cls.append(x_adv.original_class)
+            self.x = np.append(self.x, np.array(self.adv_imgs), axis=0)
+            self.y = np.append(self.y, self.orig_cls)
+
+            self.kmodel.fit(x=self.x, y=self.y, epochs=1, validation_data=validation_data, verbose=verbose)
 
 if __name__ == "__main__":
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
