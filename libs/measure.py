@@ -24,6 +24,16 @@ class TFMetrics:
         x = tf.math.divide(x, tf.cast(tf.size(y_true), tf.float32))
         x = tf.math.sqrt(x)
         return x
+    
+    @staticmethod
+    def eucdiff(y_true, y_pred):
+        diff = y_true - y_pred
+        return tf.norm(diff, ord='euclidean')
+    
+    @staticmethod
+    def infdiff(y_true, y_pred):
+        diff = y_true - y_pred
+        return tf.norm(diff, ord=np.inf)
 
 class NpMetrics:
     '''Numpy配列用'''
@@ -47,6 +57,19 @@ class NpMetrics:
         x = x / y_true.size
         x = np.sqrt(x)
         return x
+    
+    @staticmethod
+    def eucdiff(y_true, y_pred):
+        '''画像間のユークリッドノルム'''
+        diff = y_true - y_pred
+        return np.linalg.norm(diff.ravel(), ord=2)
+    
+    @staticmethod
+    def infdiff(y_true, y_pred):
+        '''画像感のL無限ノルム'''
+        diff = y_true - y_pred
+        return np.linalg.norm(diff.ravel(), ord=np.inf)
+
 
 if __name__ == '__main__':
     pass
